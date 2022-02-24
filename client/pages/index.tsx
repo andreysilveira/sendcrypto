@@ -12,7 +12,6 @@ const Home = () => {
       <TransactionsProvider>
         <Header />
         <Card />
-        <Services />
         <Transactions />
         <Footer />
       </TransactionsProvider>

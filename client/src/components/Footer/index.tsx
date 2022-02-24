@@ -1,9 +1,9 @@
 export function Footer() {
   return (
     <>
-      <footer className="w-full py-8">
+      <footer className="w-full flex fixed bottom-0 pb-3">
         <div className="mx-auto max-w-screen-xl flex items-center content-start justify-items-center px-4">
-          <div className="mx-auto flex max-w-xs items-center">
+          <div className="mx-auto w-40 justify-around flex max-w-xs items-center">
             <a
               href="#"
               className="text-gray-400 transition-colors duration-200 hover:text-gray-800 dark:hover:text-white"

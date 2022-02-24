@@ -5,7 +5,16 @@ import { contractABI, contractAddress } from '../utils/constants'
 
 export const TransactionContext = React.createContext()
 
-const { ethereum } = window
+// const ifEthereum = if (typeof window !== 'undefined') {
+//   const { ethereum } = window
+// }
+
+const ifEthereum = typeof window !== 'undefined' ? { ethereum } = window : ''
+
+const storageLocal =
+  typeof window !== 'undefined' ? localStorage.getItem('transactionCount') : ''
+
+// const { ethereum } = window
 
 const createEthereumContract = () => {
   const provider = new ethers.providers.Web3Provider(ethereum)
@@ -23,13 +32,12 @@ export const TransactionsProvider = ({ children }) => {
   const [formData, setformData] = useState({
     addressTo: '',
     amount: '',
-    keyword: '',
-    message: '',
   })
   const [currentAccount, setCurrentAccount] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [transactionCount, setTransactionCount] = useState(
-    localStorage.getItem('transactionCount')
+    storageLocal
+    //localStorage.getItem('transactionCount')
   )
   const [transactions, setTransactions] = useState([])
 
@@ -52,8 +60,6 @@ export const TransactionsProvider = ({ children }) => {
             timestamp: new Date(
               transaction.timestamp.toNumber() * 1000
             ).toLocaleString(),
-            message: transaction.message,
-            keyword: transaction.keyword,
             amount: parseInt(transaction.amount._hex) / 10 ** 18,
           })
         )
@@ -74,6 +80,7 @@ export const TransactionsProvider = ({ children }) => {
       if (!ethereum) return alert('Please install MetaMask.')
 
       const accounts = await ethereum.request({ method: 'eth_accounts' })
+      console.log(accounts)
 
       if (accounts.length) {
         setCurrentAccount(accounts[0])
@@ -89,7 +96,7 @@ export const TransactionsProvider = ({ children }) => {
 
   const checkIfTransactionsExists = async () => {
     try {
-      if (ethereum) {
+      if (ifEthereum) {
         const transactionsContract = createEthereumContract()
         const currentTransactionCount =
           await transactionsContract.getTransactionCount()
@@ -99,7 +106,7 @@ export const TransactionsProvider = ({ children }) => {
     } catch (error) {
       console.log(error)
 
-      throw new Error('No ethereum object')
+      //throw new Error('No ethereum object')
     }
   }
 

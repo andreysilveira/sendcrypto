@@ -3,6 +3,7 @@ import { AiFillPlayCircle } from 'react-icons/ai'
 import { SiEthereum } from 'react-icons/si'
 import { BsInfoCircle } from 'react-icons/bs'
 
+import shortenAddress from '../../utils/shortenAddress'
 import { TransactionContext } from '../../context/TransactionContext'
 import { Loader } from '../Loader/index'
 //import { shortenAddress } from '../utils/shortenAddress'
@@ -54,7 +55,7 @@ export function Card() {
                 <BsInfoCircle fontSize={17} color="#fff" />
               </div>
               <div>
-                <p className="text-sm font-light text-white">0xabc</p>
+                <p className="text-sm font-light text-white">{shortenAddress(currentAccount)}</p>
                 <p className="mt-1 text-lg font-semibold text-white">
                   Ethereum
                 </p>

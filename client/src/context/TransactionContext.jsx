@@ -9,7 +9,7 @@ export const TransactionContext = React.createContext()
 //   const { ethereum } = window
 // }
 
-const ifEthereum = typeof window !== 'undefined' ? { ethereum } = window : ''
+const ifEthereum = typeof window !== 'undefined' ? ({ ethereum } = window) : ''
 
 const storageLocal =
   typeof window !== 'undefined' ? localStorage.getItem('transactionCount') : ''
@@ -47,7 +47,7 @@ export const TransactionsProvider = ({ children }) => {
 
   const getAllTransactions = async () => {
     try {
-      if (ethereum) {
+      if (ifEthereum) {
         const transactionsContract = createEthereumContract()
 
         const availableTransactions =
@@ -77,9 +77,9 @@ export const TransactionsProvider = ({ children }) => {
 
   const checkIfWalletIsConnect = async () => {
     try {
-      if (!ethereum) return alert('Please install MetaMask.')
+      if (!ifEthereum) return alert('Please install MetaMask.')
 
-      const accounts = await ethereum.request({ method: 'eth_accounts' })
+      const accounts = await ifEthereum.request({ method: 'eth_accounts' })
       console.log(accounts)
 
       if (accounts.length) {
@@ -112,22 +112,24 @@ export const TransactionsProvider = ({ children }) => {
 
   const connectWallet = async () => {
     try {
-      if (!ethereum) return alert('Please install MetaMask.')
+      if (!ifEthereum) return alert('Please install MetaMask.')
 
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+      const accounts = await ifEthereum.request({
+        method: 'eth_requestAccounts',
+      })
 
       setCurrentAccount(accounts[0])
       window.location.reload()
     } catch (error) {
       console.log(error)
 
-      throw new Error('No ethereum object')
+      // throw new Error('No ethereum object')
     }
   }
 
   const sendTransaction = async () => {
     try {
-      if (ethereum) {
+      if (ifEthereum) {
         const { addressTo, amount, keyword, message } = formData
         const transactionsContract = createEthereumContract()
         const parsedAmount = ethers.utils.parseEther(amount)
@@ -138,17 +140,15 @@ export const TransactionsProvider = ({ children }) => {
             {
               from: currentAccount,
               to: addressTo,
-              gas: '0x5208',
-              value: parsedAmount._hex,
+              gas: '0x5208', // 21000 GWEI
+              value: parsedAmount._hex, // 0.00001
             },
           ],
         })
 
         const transactionHash = await transactionsContract.addToBlockchain(
           addressTo,
-          parsedAmount,
-          message,
-          keyword
+          parsedAmount
         )
 
         setIsLoading(true)
@@ -168,7 +168,7 @@ export const TransactionsProvider = ({ children }) => {
     } catch (error) {
       console.log(error)
 
-      throw new Error('No ethereum object')
+      // throw new Error('No ethereum object')
     }
   }
 
